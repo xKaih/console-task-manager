@@ -7,21 +7,29 @@ import java.io.File
 //Basically I will do simple CRUD for this.
 class TaskHandler {
 
-    //Basically collects all the data from the file to load the saved tasks
-    constructor(){
-        try {
-            json.decodeFromString<MutableMap<Int, Task>>(File("tasks.json").readText()).toMap(tasks)
-        }
-         catch (e: Exception){
-             //For the moment this won't do anything
-         }
-    }
 
+
+    private var nextId = 1
+
+    private val file = File("tasks.json")
     private val json = Json {
         ignoreUnknownKeys = true
         prettyPrint = true
     }
     private val tasks = mutableMapOf<Int, Task>()
+
+    //Basically collects all the data from the file to load the saved tasks
+    init {
+        if (file.exists()) {
+            try {
+                val storage = json.decodeFromString<TaskStorage>(file.readText())
+                tasks.putAll(storage.tasks)
+                nextId = storage.nextId
+            } catch (e: Exception) {
+                println("Error loading tasks: ${e.message}")
+            }
+        }
+    }
 
     private fun getTask(id: Int): Task? {
         return tasks[id]
@@ -33,7 +41,7 @@ class TaskHandler {
     }
 
     fun addTask(name: String, description: String, completed: Boolean = false) {
-        tasks.put(tasks.size+1,Task(name, description, completed))
+        tasks.put(nextId++, Task(name, description, completed))
     }
 
     fun modifyTask(taskId: Int, name: String? = null, description: String? = null) {
@@ -54,7 +62,7 @@ class TaskHandler {
     }
 
     fun saveChanges() {
-        val tasksString = json.encodeToString(getTasks())
-        File("tasks.json").writeText(tasksString)
+        val storage = json.encodeToString(TaskStorage(nextId, tasks))
+        File("tasks.json").writeText(storage)
     }
 }
