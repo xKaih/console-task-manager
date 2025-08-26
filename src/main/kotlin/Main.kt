@@ -5,7 +5,7 @@ fun printTasks(tasks: Map<Int, Task>) {
         ConsoleHandler.printWithColor(task.key.toString() + ". ", AnsiColor.YELLOW)
             .printWithColor("[" + task.value.name + "] ", AnsiColor.PURPLE)
             .printWithColor(task.value.description + " ", AnsiColor.YELLOW)
-            .printlnWithColor("X",if (task.value.completed) AnsiColor.GREEN else AnsiColor.RED).lineBreak()
+            .printlnWithColor("X",if (task.value.completed) AnsiColor.GREEN else AnsiColor.RED)
     }
 }
 
@@ -32,16 +32,19 @@ fun main() {
             ConsoleHandler.printlnWithColor("Currently no tasks have been added yet", AnsiColor.YELLOW).lineBreak()
         } else {
             printTasks(tasks)
+            println()
         }
 
         ConsoleHandler.printlnWithColor("[1] Add task", AnsiColor.BLUE)
             .printlnWithColor("[2] Edit task", AnsiColor.BLUE)
             .printlnWithColor("[3] (Un)Complete task", AnsiColor.BLUE)
+            .printlnWithColor("[4] Delete task", AnsiColor.BLUE) //I was so tired and I forgot this lmao
             .printWithColor("Select an option: ", AnsiColor.CYAN)
         val option = readln().toIntOrNull() ?: 1
 
         ConsoleHandler.clearConsole()
         printTasks(tasks)
+        println()
 
         when (option) {
             1 -> {
@@ -60,6 +63,12 @@ fun main() {
                 ConsoleHandler.printWithColor("Id: ", AnsiColor.YELLOW)
                 val id = readln().toIntOrNull() ?: -1
                 taskHandler.alternateTaskState(id)
+            }
+
+            4 -> {
+                ConsoleHandler.printWithColor("Id: ", AnsiColor.YELLOW)
+                val id = readln().toIntOrNull() ?: -1
+                taskHandler.deleteTask(id)
             }
         }
         taskHandler.saveChanges()
