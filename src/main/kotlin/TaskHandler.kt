@@ -38,7 +38,6 @@ class TaskHandler {
     fun getTasks(): Map<Int, Task> {
         val tasksCopy = mutableMapOf<Int, Task>()
         tasks.mapValuesTo(tasksCopy) { it.value }
-        tasks.mapKeysTo(tasksCopy) { it.key }
         return tasksCopy//Return a copy of the original map just for securance.
         // But probably not necessary cause lol this is a simple project. Anyway I think is a good practice
     }
